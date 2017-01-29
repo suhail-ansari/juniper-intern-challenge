@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Juniper Intern Coding Challenge</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body ng-app="juniper-app">
+    <!-- navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    Juniper Intern Coding Challenge
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- /navbar -->
+
+    <!-- main container -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-lg-offset-3 col-md-offset-3">
+              <ng-view>  
+            </div>
+        </div>
+    </div>
+    <!-- /main container -->
+
+    <!-- scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="main.js"></script>
+    <!-- /scripts -->
+
+    <!-- angular templates -->
+    <!-- main template -->
+    <script type="text/ng-template" id="main-view.html">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h5>Juniper Query Builder<h4></div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <label for="table">Table</label>
+                        <input type="text" name="table" class="form-control" ng-model="data.table" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control"
+                                        uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions"
+                                        is-open="isDatepickerOpen[0]"  ng-model="data.start_time.date">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[0] = !isDatepickerOpen[0]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.start_time.time">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" 
+                                        uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions" 
+                                        is-open="isDatepickerOpen[1]" ng-model="data.end_time.date" close-text="Close">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[1] = !isDatepickerOpen[1]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.end_time.time">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="selectFields">Select Fields<br><small>Hold "Shift" to make multiple selections.</small></label>
+                        <select multiple name="selectFields" ng-model="data.select_fields" class="form-control">
+                            <option>time</option>
+                            <option>source_vn</option>
+                            <option>destination_vn</option>
+                            <option>source_port</option>
+                            <option>destination_port</option>
+                            <option>traffic</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="button" class="form-control" ng-click="submitForm()" value="Submit">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </script>
+    <!-- /main template -->
+
+    <!-- json view template -->
+    <script type="text/ng-template" id="json-view.html">
+        
+    </script>
+    <!-- /json view template -->
+
+</html>
