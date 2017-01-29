@@ -34,8 +34,141 @@
     <!-- main container -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-lg-offset-3 col-md-offset-3">
-              <ng-view>  
+            <!-- main controller view -->
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-lg-offset-3 col-md-offset-3" ng-controller="MainController">
+                <!-- form panel -->
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h5>Juniper Query Builder<h4></div>
+                    <div class="panel-body">
+                        <!-- query builder form -->
+                        <form>
+                            <!-- table name -->
+                            <div class="form-group">
+                                <label for="table">Table</label>
+                                <input type="text" name="table" class="form-control" ng-model="data.table">
+                            </div>
+
+                            <!-- start time -->
+                            <div class="form-group">
+                                <label>Start Time</label>
+                                <div class="row" ng-class="{'has-error': (!isStartDateValid || !isStartTimeValid)}">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control"
+                                                uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions"
+                                                is-open="isDatepickerOpen[0]"  ng-model="data.start_time.date" ng-focus="isStartDateValid = true; isStartTimeValid = true;">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[0] = !isDatepickerOpen[0]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.start_time.time">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- enf time -->
+                            <div class="form-group">
+                                <label>End Time</label>
+                                <div class="row" ng-class="{'has-error': (!isEndDateValid || !isEndTimeValid)}">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" 
+                                                uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions" 
+                                                is-open="isDatepickerOpen[1]" ng-model="data.end_time.date"  ng-focus="isEndDateValid = true;isEndTimeValid = true;">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[1] = !isDatepickerOpen[1]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.end_time.time">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- select fields -->
+                            <div class="form-group" ng-class="{'has-error': !isSelectFieldValid}">
+                                <label for="selectFields">Select Fields<br><small>Hold "Shift" to make multiple selections.</small></label>
+                                <select multiple name="selectFields" ng-model="data.select_fields" class="form-control" ng-focus="isSelectFieldValid = true">
+                                    <option>time</option>
+                                    <option>source_vn</option>
+                                    <option>destination_vn</option>
+                                    <option>source_port</option>
+                                    <option>destination_port</option>
+                                    <option>traffic</option>
+                                </select>
+                            </div>
+                            
+                            <!-- where condition -->
+                            <div class="form-group">
+                                <label>Where Condition</label>
+                                <br>
+                                <!-- show generated query in text -->
+                                <input type="text" class="form-control font-monospace" ng-model="queryString" placeholder="Generated Query String" readonly>
+                                <br>
+                                <button class="btn btn-sm btn-success" ng-click="addNewOrQueryGroup()"><span class="glyphicon glyphicon-plus"></span> Add OR query group</button>
+                                
+                                <br><br>
+                                <!-- display each OR query group -->
+                                <div ng-repeat="orQueryGroup in data.where"> 
+                                    <div class="well query-group-container">
+                                        <button class="btn btn-sm btn-success" ng-click="addNewAndQuery($index)"><span class="glyphicon glyphicon-plus"></span> Add AND query</button>
+                                        <button class="btn btn-sm btn-danger" ng-click="deleteOrQueryGroup($index)"><span class="glyphicon glyphicon-trash"></span> Delete OR query group</button>
+                                        <br>
+                                        <br>
+                                        <div ng-show="data.where[$index].length > 0">
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Field</div>
+                                                <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4">Operator</div>
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Value</div>
+                                            </div>
+                                            <div class="form-group" ng-repeat="andQueryGroup in data.where[$index]" ng-class="{'has-error': !isValidQueryGroup[$parent.$index]}">
+                                                <div class="row">
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                        <select ng-model="data.where[$parent.$index][$index].name" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
+                                                            <option>time</option>
+                                                            <option>source_vn</option>
+                                                            <option>destination_vn</option>
+                                                            <option>source_port</option>
+                                                            <option>destination_port</option>
+                                                            <option>traffic</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                                        <select ng-model="data.where[$parent.$index][$index].operator" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
+                                                            <option>=</option>
+                                                            <option>!=</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                        <input type="text" ng-model="data.where[$parent.$index][$index].value" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                                        <button class="btn btn-danger" ng-click="deleteOrQuery($parent.$index, $index)" title="Delete">
+                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- well -->
+                            </div> <!-- where condition -->
+
+                            <div class="form-group">
+                                <input type="button" class="form-control" ng-click="submitForm()" value="Generate JSON">
+                            </div>
+                        </form> <!-- query builder form -->
+                    </div>
+                </div>
+
+                <!-- json result display panel -->
+                <div class="panel panel-default" ng-show="showResult">
+                    <div class="panel-heading"><h5>Results</h5></div>
+                    <div class="panel-body">
+                        <pre>{{ jsonResult }}</pre>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -43,163 +176,9 @@
 
     <!-- scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.4.0/ui-bootstrap-tpls.min.js"></script>
     <script src="main.js"></script>
     <!-- /scripts -->
-
-    <!-- angular templates -->
-    <!-- main template -->
-    <script type="text/ng-template" id="main-view.html">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h5>Juniper Query Builder<h4></div>
-            <div class="panel-body">
-                <form>
-                    <div class="form-group">
-                        <label for="table">Table</label>
-                        <input type="text" name="table" class="form-control" ng-model="data.table" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Start Time</label>
-                        <div class="row" ng-class="{'has-error': (!isStartDateValid || !isStartTimeValid)}">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control"
-                                        uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions"
-                                        is-open="isDatepickerOpen[0]"  ng-model="data.start_time.date" ng-focus="isStartDateValid = true; isStartTimeValid = true;">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[0] = !isDatepickerOpen[0]"><i class="glyphicon glyphicon-calendar"></i></button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.start_time.time">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>End Time</label>
-                        <div class="row" ng-class="{'has-error': (!isEndDateValid || !isEndTimeValid)}">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" 
-                                        uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions" 
-                                        is-open="isDatepickerOpen[1]" ng-model="data.end_time.date"  ng-focus="isEndDateValid = true;isEndTimeValid = true;">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[1] = !isDatepickerOpen[1]"><i class="glyphicon glyphicon-calendar"></i></button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.end_time.time">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" ng-class="{'has-error': !isSelectFieldValid}">
-                        <label for="selectFields">Select Fields<br><small>Hold "Shift" to make multiple selections.</small></label>
-                        <select multiple name="selectFields" ng-model="data.select_fields" class="form-control" ng-focus="isSelectFieldValid = true">
-                            <option>time</option>
-                            <option>source_vn</option>
-                            <option>destination_vn</option>
-                            <option>source_port</option>
-                            <option>destination_port</option>
-                            <option>traffic</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Where Condition</label>
-                        <br>
-                        <input type="text" class="form-control font-monospace" ng-model="queryString" placeholder="Generated Query String" readonly>
-                        <br>
-                        <button class="btn btn-sm btn-success" ng-click="addNewOrQueryGroup()"><span class="glyphicon glyphicon-plus"></span> Add OR query group</button>
-                        <br><br>
-                        <div ng-repeat="orQueryGroup in data.where"> 
-                            <div class="well query-group-container">
-                                <button class="btn btn-sm btn-success" ng-click="addNewAndQuery($index)"><span class="glyphicon glyphicon-plus"></span> Add AND query</button>
-                                <button class="btn btn-sm btn-danger" ng-click="deleteOrQueryGroup($index)"><span class="glyphicon glyphicon-trash"></span> Delete OR query group</button>
-                                <br>
-                                <br>
-                                <div ng-show="data.where[$index].length > 0">
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Field</div>
-                                        <div class="col-lg-2 col-md-4 col-sm-4 col-xs-4">Operator</div>
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">Value</div>
-                                    </div>
-                                    <div class="form-group" ng-repeat="andQueryGroup in data.where[$index]" ng-class="{'has-error': !isValidQueryGroup[$parent.$index]}">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                                                <select ng-model="data.where[$parent.$index][$index].name" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
-                                                    <option>time</option>
-                                                    <option>source_vn</option>
-                                                    <option>destination_vn</option>
-                                                    <option>source_port</option>
-                                                    <option>destination_port</option>
-                                                    <option>traffic</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                                                <select ng-model="data.where[$parent.$index][$index].operator" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
-                                                    <option>=</option>
-                                                    <option>!=</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-                                                <input type="text" ng-model="data.where[$parent.$index][$index].value" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
-                                            </div>
-                                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                                                <button class="btn btn-danger" ng-click="deleteOrQuery($parent.$index, $index)" title="Delete">
-                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <input type="button" class="form-control" ng-click="submitForm()" value="Generate JSON">
-                    </div>
-
-                </form>
-            </div>
-        </div>
-
-        <div class="panel panel-default" ng-show="showResult">
-            <div class="panel-heading"><h5>Results</h5></div>
-            <div class="panel-body">
-                <pre>{{ jsonResult }}</pre>
-            </div>
-        </div>
-
-        <div class="modal fade" ng-class="{'modal-open in': dialogOptions.show, 'modal-close': !dialogOptions.show}" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" ng-click="dialogOptions.show = false;" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">{{ dialogOptions.title }}</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>{{ dialogOptions.message }}</p>
-                    </div>
-                    <div class="modal-footer" ng-repeat="dialogButton in dialogOptions.buttons">
-                        <button type="button" class="btn {{ dialogButton.type }}" ng-click="dialogButton.action()">{{ dialogButton.text }}</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-
-    </script>
-    <!-- /main template -->
-
-    <!-- json view template -->
-    <script type="text/ng-template" id="json-view.html">
-        
-    </script>
-    <!-- /json view template -->
 
 </html>

@@ -1,16 +1,4 @@
-var app = angular.module("juniper-app", ["ngRoute", "ui.bootstrap"]);
-
-app.config(function($routeProvider){
-    $routeProvider
-    .when('/', {
-        templateUrl: 'main-view.html', 
-        controller: 'MainController'
-    })
-    .otherwise({
-        redirectTo: '/'
-    });
-});
-
+var app = angular.module("juniper-app", ["ui.bootstrap"]);
 
 app.controller('MainController', function($scope){
 
