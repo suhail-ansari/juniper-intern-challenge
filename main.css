@@ -5,3 +5,22 @@ body {
 div.timepicker-container {
     margin-top: -34px;
 }
+
+.font-monospace {
+    font-family: monospace;
+}
+
+.query-group-container {
+    overflow-x: scroll;
+}
+
+.modal-open {
+    display: block;
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+    display: none;
+    opacity: 0;
+}
