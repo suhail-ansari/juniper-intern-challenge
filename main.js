@@ -22,9 +22,6 @@ app.controller('MainController', function($scope){
     $scope.format = "MM/dd/yyyy";
     $scope.isDatepickerOpen = [false, false];
     
-
-    $scope.showResult = false;
-
     $scope.data = {
         start_time: {date: "", time: ""},
         end_time: {date: "", time: ""},
@@ -32,13 +29,16 @@ app.controller('MainController', function($scope){
         select_fields: [],
         where: []
     }
-
+    
+    $scope.isValidQueryGroup = [];
     $scope.addNewOrQueryGroup = function(){
         $scope.data.where.push([]);
+        $scope.isValidQueryGroup.push(true);
     }
 
     $scope.deleteOrQueryGroup = function(index){
         $scope.data.where.splice(index, 1);
+        $scope.isValidQueryGroup.splice(index, 1);
     }
 
     $scope.addNewAndQuery = function(index){
@@ -67,8 +67,8 @@ app.controller('MainController', function($scope){
         $scope.data.where[parentIndex].splice(index, 1);
     }   
 
-    $scope.isStarDateValid = true;
-    $scope.isStarTimeValid = true;
+    $scope.isStartDateValid = true;
+    $scope.isStartTimeValid = true;
     $scope.isEndDateValid = true;
     $scope.isEndTimeValid = true;
     $scope.isSelectFieldValid = true;
@@ -81,8 +81,81 @@ app.controller('MainController', function($scope){
     }
 
     $scope.submitForm = function(){
+
+        $scope.isStartDateValid = true;
+        $scope.isStartTimeValid = true;
+        $scope.isEndDateValid = true;
+        $scope.isEndTimeValid = true;
+        $scope.isSelectFieldValid = true;
         
+        var res = {};
+        
+        res.table_name = $scope.data.table;
+        
+        if(!$scope.data.start_time.date || !$scope.data.start_time.time){
+            $scope.isStartDateValid = false;
+            $scope.isStartTimeValid = false;
+        } else {
+            var startDate = new Date();
+            startDate.setMonth($scope.data.start_time.date.getMonth());
+            startDate.setDate($scope.data.start_time.date.getDate());
+            startDate.setYear($scope.data.start_time.date.getFullYear());
+            startDate.setHours($scope.data.start_time.time.getHours());
+            startDate.setMinutes($scope.data.start_time.time.getMinutes());
+            startDate.setSeconds(0);
+            startDate.setMilliseconds(0);
+            res.start_time = startDate.getTime();
+        }
+
+        if(!$scope.data.end_time.date || !$scope.data.end_time.time){
+            $scope.isEndDateValid = false;
+            $scope.isEndTimeValid = false;
+        } else {
+            var endDate = new Date();
+            endDate.setMonth($scope.data.end_time.date.getMonth());
+            endDate.setDate($scope.data.end_time.date.getDate());
+            endDate.setYear($scope.data.end_time.date.getFullYear());
+            endDate.setHours($scope.data.end_time.time.getHours());
+            endDate.setMinutes($scope.data.end_time.time.getMinutes());
+            endDate.setSeconds(0);
+            endDate.setMilliseconds(0);
+            res.end_time = endDate.getTime();
+        }
+
+        if($scope.data.select_fields.length < 1){
+            $scope.isSelectFieldValid = false;
+        } else {
+            res.select_fields = $scope.data.select_fields;
+        }
+
+        if($scope.isStartDateValid &&
+            $scope.isStartTimeValid &&
+            $scope.isEndDateValid &&
+            $scope.isEndTimeValid &&
+            $scope.isSelectFieldValid &&
+            $scope.validateQuery($scope.data.where)) {
+                res.where_clause = $scope.data.where; 
+                $scope.displayResult(res);
+            }
     }
 
+    $scope.validateQuery = function(queryGroups){
+        var isValid = true;
+        $scope.isValidQueryGroup = queryGroups.map(function(queryGroup){
+            var _isValidQueryGroup = true;
+            queryGroup.map(function(query){
+                isValid = isValid && (query.name != "") && (query.operator != "") && (query.value != "");
+                _isValidQueryGroup = _isValidQueryGroup && isValid;
+            });
+            return _isValidQueryGroup;
+        });
+        console.log(queryGroups, isValid, $scope.isValidQueryGroup);
+        return isValid;
+    }
+
+    $scope.displayResult = function(data){
+        $scope.showResult = true;
+        $scope.jsonResult = angular.toJson(data, 2);
+    }
 
 });
