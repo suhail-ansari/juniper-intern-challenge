@@ -19,6 +19,7 @@ app.controller('MainController', function($scope){
         maxDate: new Date(2020, 5, 22),
         minDate: new Date(),
     }
+
     $scope.format = "MM/dd/yyyy";
     $scope.isDatepickerOpen = [false, false];
     
@@ -31,6 +32,7 @@ app.controller('MainController', function($scope){
     }
     
     $scope.isValidQueryGroup = [];
+
     $scope.addNewOrQueryGroup = function(){
         $scope.data.where.push([]);
         $scope.isValidQueryGroup.push(true);
@@ -51,7 +53,6 @@ app.controller('MainController', function($scope){
 
     $scope.queryString = "";
     $scope.$watch('data.where', function(newValue, oldValue){
-        console.log(newValue, oldValue);
         $scope.queryString = "";
         newValue.map(function(andGroup, i){
 
