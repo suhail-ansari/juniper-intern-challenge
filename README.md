@@ -7,7 +7,7 @@ To run the App
     cd juniper-intern-challenge.git
     python -m SimpleHTTPServer
 
-then open the web page in your browser using this address (http:/127.0.0.1:8000)[http://127.0.0.1]
+then open the web page in your browser using this address [http:/127.0.0.1:8000](http://127.0.0.1)
 
 ## Run Tests
 To run the Tests
