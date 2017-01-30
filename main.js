@@ -52,6 +52,9 @@ app.controller('MainController', function($scope){
      * @param {number} index: index of the OR query group to be removed
      */
     $scope.deleteOrQueryGroup = function(index){
+        if(index >= $scope.data.where.length){
+            return false;
+        }
         $scope.data.where.splice(index, 1);
         $scope.isValidQueryGroup.splice(index, 1);
     }
@@ -74,6 +77,9 @@ app.controller('MainController', function($scope){
      * @param {number} index: index of the AND query to remove
      */
     $scope.deleteAndQuery = function(parentIndex, index){
+        if(parentIndex >= $scope.data.where.length || index >= $scope.data.where[parentIndex].length){
+            return false;
+        }
         $scope.data.where[parentIndex].splice(index, 1);
     }   
 
@@ -206,6 +212,9 @@ app.controller('MainController', function($scope){
      * @return {number}: unix timestamp of the combined date and time
      */
     $scope.combineDateTime = function(dateTime){
+        if(!$scope.validateDate(dateTime)){
+            return false;
+        }
         var combinedDate = new Date();
         combinedDate.setMonth(dateTime.date.getMonth());
         combinedDate.setDate(dateTime.date.getDate());
@@ -232,12 +241,13 @@ app.controller('MainController', function($scope){
         $scope.isValidQueryGroup = queryGroups.map(function(queryGroup){
             var _isValidQueryGroup = true;
             queryGroup.map(function(query){
-                isValid = isValid && (query.name != "") && (query.operator != "") && (query.value != "");
+                isValid = isValid && (query.name != undefined && query.name != "") &&
+                    (query.operator != undefined && query.operator != "") &&
+                    (query.value != undefined && query.value != "");
                 _isValidQueryGroup = _isValidQueryGroup && isValid;
             });
             return _isValidQueryGroup;
         });
-        console.log(queryGroups, isValid, $scope.isValidQueryGroup);
         return isValid;
     }
 
