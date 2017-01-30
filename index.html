@@ -43,60 +43,66 @@
                         <!-- query builder form -->
                         <form>
                             <!-- table name -->
-                            <div class="form-group">
-                                <label for="table">Table</label>
-                                <input type="text" name="table" class="form-control" ng-model="data.table">
-                            </div>
-
-                            <!-- start time -->
-                            <div class="form-group">
-                                <label>Start Time</label>
-                                <div class="row" ng-class="{'has-error': (!isStartDateValid || !isStartTimeValid)}">
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control"
-                                                uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions"
-                                                is-open="isDatepickerOpen[0]"  ng-model="data.start_time.date" ng-focus="isStartDateValid = true; isStartTimeValid = true;">
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[0] = !isDatepickerOpen[0]"><i class="glyphicon glyphicon-calendar"></i></button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.start_time.time">
-                                    </div>
+                            <div class="well well-sm">
+                                <div class="form-group" ng-class="{'has-error': !isValidTableName}">
+                                    <label for="table">Table</label>
+                                    <input type="text" name="table" class="form-control" ng-model="data.table">
                                 </div>
                             </div>
 
-                            <!-- enf time -->
-                            <div class="form-group">
-                                <label>End Time</label>
-                                <div class="row" ng-class="{'has-error': (!isEndDateValid || !isEndTimeValid)}">
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" 
-                                                uib-datepicker-popup="{{format}}" datepicker-options="datepickerOptions" 
-                                                is-open="isDatepickerOpen[1]" ng-model="data.end_time.date"  ng-focus="isEndDateValid = true;isEndTimeValid = true;">
-                                            <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default" ng-click="isDatepickerOpen[1] = !isDatepickerOpen[1]"><i class="glyphicon glyphicon-calendar"></i></button>
-                                            </span>
+                            <!-- start time -->
+                            <div class="well well-sm" style="padding-bottom: 0px; padding-top: 15px;">
+                                <div class="form-group">
+                                    <label>Start Time</label>
+                                    <div class="row" ng-class="{'has-error': (!isStartDateValid || !isStartTimeValid)}">
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control"
+                                                    uib-datepicker-popup="{{format}}" datepicker-options="startDateOptions"
+                                                    is-open="isDatepickerOpen[0]"  ng-model="data.start_time.date" ng-focus="toggleMaxDate()">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="toggleMaxDate(); isDatepickerOpen[0] = !isDatepickerOpen[0]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.start_time.time">
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.end_time.time">
+                                </div>
+
+                                <!-- end time -->
+                                <div class="form-group">
+                                    <label>End Time</label>
+                                    <div class="row" ng-class="{'has-error': (!isEndDateValid || !isEndTimeValid)}">
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" 
+                                                    uib-datepicker-popup="{{format}}" datepicker-options="endDateOptions" 
+                                                    is-open="isDatepickerOpen[1]" ng-model="data.end_time.date"  ng-focus="toggleMinDate()">
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-default" ng-click="toggleMinDate(); isDatepickerOpen[1] = !isDatepickerOpen[1]"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 timepicker-container" uib-timepicker ng-model="data.end_time.time">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- select fields -->
-                            <div class="form-group" ng-class="{'has-error': !isSelectFieldValid}">
-                                <label for="selectFields">Select Fields<br><small>Hold "Shift" to make multiple selections.</small></label>
-                                <select multiple name="selectFields" ng-model="data.select_fields" class="form-control" ng-focus="isSelectFieldValid = true">
-                                    <option>time</option>
-                                    <option>source_vn</option>
-                                    <option>destination_vn</option>
-                                    <option>source_port</option>
-                                    <option>destination_port</option>
-                                    <option>traffic</option>
-                                </select>
+                            <div class="well well-sm">
+                                <div class="form-group" ng-class="{'has-error': !isSelectFieldValid}">
+                                    <label for="selectFields">Select Fields<br><small>Hold "Shift" or Drag Mouse to make multiple selections.</small></label>
+                                    <select multiple name="selectFields" ng-model="data.select_fields" class="form-control" ng-focus="isSelectFieldValid = true">
+                                        <option>time</option>
+                                        <option>source_vn</option>
+                                        <option>destination_vn</option>
+                                        <option>source_port</option>
+                                        <option>destination_port</option>
+                                        <option>traffic</option>
+                                    </select>
+                                </div>
                             </div>
                             
                             <!-- where condition -->
@@ -144,7 +150,7 @@
                                                         <input type="text" ng-model="data.where[$parent.$index][$index].value" class="form-control" ng-focus="isValidQueryGroup[$parent.$index] = true;">
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                                                        <button class="btn btn-danger" ng-click="deleteOrQuery($parent.$index, $index)" title="Delete">
+                                                        <button class="btn btn-danger" ng-click="deleteAndQuery($parent.$index, $index)" title="Delete">
                                                             <span class="glyphicon glyphicon-trash"></span>
                                                         </button>
                                                     </div>
