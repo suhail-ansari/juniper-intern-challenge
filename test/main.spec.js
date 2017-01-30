@@ -18,7 +18,7 @@ describe('Check Controller Initialisation', function(){
         expect(scope.data).toEqual({
             start_time: {date: "", time: ""},
             end_time: {date: "", time: ""},
-            table: "traffic_table",
+            table: "",
             select_fields: [],
             where: []
         });
@@ -222,9 +222,22 @@ describe('Check form validation methods', function(){
         expect(scope.validateForm(scope.data)).toBeFalsy();
     });
 
+    it('Checks validateForm method with table name unset', function(){
+        var controller = createController();
+        scope.data = {
+            table: "",
+            start_time: {date:"", time:""},
+            end_time: {date: new Date(), time: new Date()},
+            select_fields: ['source_vn'],
+            where: []
+        };
+        expect(scope.validateForm(scope.data)).toBeFalsy();
+    });
+
     it('Checks validateForm method with start_time unset data', function(){
         var controller = createController();
         scope.data = {
+            table: "traffic_table",
             start_time: {date:"", time:""},
             end_time: {date: new Date(), time: new Date()},
             select_fields: ['source_vn'],
@@ -236,6 +249,7 @@ describe('Check form validation methods', function(){
     it('Checks validateForm method with end_time unset data', function(){
         var controller = createController();
         scope.data = {
+            table: "traffic_table",
             start_time: {date: new Date(), time: new Date()},
             end_time: {date:"", time:""},
             select_fields: ['source_vn'],
@@ -254,6 +268,7 @@ describe('Check form validation methods', function(){
         var endDate = new Date();
 
         scope.data = {
+            table: "traffic_table",
             end_time: {date: endDate, time: endDate},
             start_time: {date: startDate, time: startDate},
             select_fields: ['source_vn'],
@@ -266,6 +281,7 @@ describe('Check form validation methods', function(){
         var controller = createController();
         
         scope.data = {
+            table: "traffic_table",
             start_time: {date: new Date(), time: new Date()},
             end_time: {date: new Date(), time: new Date()},
             select_fields: ['source_vn'],
@@ -283,10 +299,11 @@ describe('Check form validation methods', function(){
         expect(scope.validateForm(scope.data)).toBeFalsy();
     });
 
-    it('Checks validateForm method with valid full where clause', function(){
+    it('Checks validateForm method with full valid data clause', function(){
         var controller = createController();
         
         scope.data = {
+            table: "traffic_table",
             start_time: {date: new Date(), time: new Date()},
             end_time: {date: new Date(), time: new Date()},
             select_fields: ['source_vn'],
@@ -297,6 +314,7 @@ describe('Check form validation methods', function(){
         var endTimeStamp = scope.combineDateTime(scope.data.end_time);
 
         expect(scope.validateForm(scope.data)).toEqual({
+            table_name: "traffic_table",
             start_time: startTimeStamp,
             end_time: endTimeStamp,
             select_fields: ['source_vn'],

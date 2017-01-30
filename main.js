@@ -6,7 +6,7 @@ app.controller('MainController', function($scope){
     $scope.data = {
         start_time: {date: "", time: ""},
         end_time: {date: "", time: ""},
-        table: "traffic_table",
+        table: "",
         select_fields: [],
         where: []
     }
@@ -130,9 +130,11 @@ app.controller('MainController', function($scope){
     $scope.validateForm = function(data){
         var isValid = true;
         var res = {};
-        if(data.table == undefined || data.table.length == 0){
+        if(data.table == undefined || data.table == 0){
             $scope.isValidTableName = false;
             isValid;
+        } else {
+            res.table_name = data.table;
         }
 
         if($scope.validateDate(data.start_time)){
