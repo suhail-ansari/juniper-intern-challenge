@@ -11,13 +11,12 @@
   "devDependencies": {
     "angular": "^1.6.1",
     "angular-mocks": "^1.6.1",
-    "angular-ui-router": "^0.4.2",
     "jasmine-core": "^2.5.2",
     "karma": "^1.4.1",
     "karma-chrome-launcher": "^2.0.0",
-    "karma-jasmine": "^1.1.0"
+    "karma-jasmine": "^1.1.0",
+    "angular-bootstrap-npm": "^0.14.3"
   },
   "dependencies": {
-    "angular-bootstrap-npm": "^0.14.3"
   }
 }
